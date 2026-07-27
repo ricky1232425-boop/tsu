@@ -27,7 +27,7 @@ Stroke.Parent = Main
 -- Título
 local Title = Instance.new("TextLabel") 
 Title.BackgroundTransparency = 1 
-Title.Size = UDim2.new(0.85, 0, 0.12, 0) 
+Title.Size = UDim2.new(0.7, 0, 0.12, 0) 
 Title.Position = UDim2.new(0.03, 0, 0, 0)
 Title.Text = "★ SOLAR DEV." 
 Title.TextColor3 = Color3.fromRGB(255,255,255) 
@@ -36,20 +36,36 @@ Title.TextSize = 14
 Title.TextXAlignment = Enum.TextXAlignment.Left
 Title.Parent = Main
 
+-- Contenedor de Botones Superiores (Minimizar y Cerrar)
+local TopButtons = Instance.new("Frame")
+TopButtons.BackgroundTransparency = 1
+TopButtons.Size = UDim2.new(0.25, 0, 0.12, 0)
+TopButtons.Position = UDim2.new(0.73, 0, 0, 0)
+TopButtons.Parent = Main
+
+-- Botón Minimizar (-)
+local MinimizeBtn = Instance.new("TextButton")
+MinimizeBtn.Size = UDim2.new(0.45, 0, 0.8, 0)
+MinimizeBtn.Position = UDim2.new(0, 0, 0.1, 0)
+MinimizeBtn.BackgroundColor3 = Color3.fromRGB(30,30,30)
+MinimizeBtn.Text = "-"
+MinimizeBtn.TextColor3 = Color3.fromRGB(255,255,255)
+MinimizeBtn.Font = Enum.Font.GothamBold
+MinimizeBtn.TextSize = 14
+MinimizeBtn.Parent = TopButtons
+Instance.new("UICorner", MinimizeBtn).CornerRadius = UDim.new(0, 4)
+
 -- Botón Cerrar (X)
 local CloseBtn = Instance.new("TextButton")
-CloseBtn.Size = UDim2.new(0.08, 0, 0.1, 0)
-CloseBtn.Position = UDim2.new(0.9, 0, 0.01, 0)
-CloseBtn.BackgroundTransparency = 1
+CloseBtn.Size = UDim2.new(0.45, 0, 0.8, 0)
+CloseBtn.Position = UDim2.new(0.55, 0, 0.1, 0)
+CloseBtn.BackgroundColor3 = Color3.fromRGB(180, 40, 40)
 CloseBtn.Text = "X"
-CloseBtn.TextColor3 = Color3.fromRGB(255, 60, 60)
+CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 CloseBtn.Font = Enum.Font.GothamBold
-CloseBtn.TextSize = 16
-CloseBtn.Parent = Main
-
-CloseBtn.MouseButton1Click:Connect(function()
-    ScreenGui:Destroy()
-end)
+CloseBtn.TextSize = 12
+CloseBtn.Parent = TopButtons
+Instance.new("UICorner", CloseBtn).CornerRadius = UDim.new(0, 4)
 
 -- Sidebar (Menú Lateral)
 local Sidebar = Instance.new("ScrollingFrame") 
@@ -73,7 +89,7 @@ PagesFolder.Size = UDim2.new(0.62, 0, 0.83, 0)
 PagesFolder.BackgroundTransparency = 1
 PagesFolder.Parent = Main
 
--- Sistema de Crear Opciones (Toggles)
+-- Función para Crear Opciones (Toggles)
 local function CreateOption(parent, text) 
     local holder = Instance.new("Frame") 
     holder.Size = UDim2.new(0.98, 0, 0, 34) 
@@ -125,7 +141,7 @@ local function CreateOption(parent, text)
     end)
 end
 
--- Estructura de Apartados/Pestañas
+-- Datos de las pestañas
 local tabsData = { 
     ["Discord"] = {"Join Discord", "Copy Link"}, 
     ["Reach"] = {"Leg Reach", "Arm Reach", "Infinite Reach"}, 
@@ -140,10 +156,13 @@ local tabsData = {
 
 local pages = {}
 local tabButtons = {}
+local firstTab = nil
 
--- Generar Pestañas y Páginas
+-- Generar Pestañas y Páginas dinámicamente
 for name, options in pairs(tabsData) do 
-    -- Crear la página correspondiente
+    if not firstTab then firstTab = name end
+
+    -- Crear la página
     local page = Instance.new("ScrollingFrame")
     page.Name = name
     page.Size = UDim2.new(1, 0, 1, 0)
@@ -164,7 +183,7 @@ for name, options in pairs(tabsData) do
     
     pages[name] = page
 
-    -- Crear Botón de la Barra Lateral
+    -- Crear Botón en la Barra Lateral
     local btn = Instance.new("TextButton") 
     btn.Size = UDim2.new(0.95, 0, 0, 30) 
     btn.BackgroundColor3 = Color3.fromRGB(20,20,20) 
@@ -183,12 +202,14 @@ for name, options in pairs(tabsData) do
 
     tabButtons[name] = {btn = btn, stroke = stroke}
 
-    -- Evento para Cambiar de Pestaña
+    -- Evento al presionar un apartado de la barra lateral
     btn.MouseButton1Click:Connect(function()
         for tabName, p in pairs(pages) do
-            p.Visible = (tabName == name)
+            local isSelected = (tabName == name)
+            p.Visible = isSelected
+            
             local bData = tabButtons[tabName]
-            if tabName == name then
+            if isSelected then
                 bData.btn.BackgroundColor3 = Color3.fromRGB(35,35,35)
                 bData.btn.TextColor3 = Color3.fromRGB(255,196,0)
                 bData.stroke.Color = Color3.fromRGB(255,196,0)
@@ -201,20 +222,35 @@ for name, options in pairs(tabsData) do
     end)
 end
 
--- Abrir la primera pestaña por defecto ("Reacts" o "Discord")
-if pages["Reacts"] then
-    pages["Reacts"].Visible = true
-    tabButtons["Reacts"].btn.TextColor3 = Color3.fromRGB(255,196,0)
-    tabButtons["Reacts"].stroke.Color = Color3.fromRGB(255,196,0)
+-- Activar la primera pestaña por defecto de forma segura
+if firstTab and pages[firstTab] then
+    pages[firstTab].Visible = true
+    tabButtons[firstTab].btn.BackgroundColor3 = Color3.fromRGB(35,35,35)
+    tabButtons[firstTab].btn.TextColor3 = Color3.fromRGB(255,196,0)
+    tabButtons[firstTab].stroke.Color = Color3.fromRGB(255,196,0)
 end
 
--- SISTEMA PARA MOVER/ARRASTRAR EN PANTALLAS TÁCTILES (MOBILE DRAGGABLE)
+-- FUNCIONALIDAD DE LOS BOTONES SUPERIORES (MINIMIZAR Y CERRAR)
+local minimized = false
+MinimizeBtn.MouseButton1Click:Connect(function()
+    minimized = not minimized
+    Sidebar.Visible = not minimized
+    PagesFolder.Visible = not minimized
+    if minimized then
+        Main.Size = UDim2.new(0.8, 0, 0, 45)
+        MinimizeBtn.Text = "+"
+    else
+        Main.Size = UDim2.new(0.8, 0, 0.7, 0)
+        MinimizeBtn.Text = "-"
+    end
+end)
+
+CloseBtn.MouseButton1Click:Connect(function()
+    ScreenGui:Destroy()
+end)
+
+-- SISTEMA PARA ARRASTRAR LA UI EN MOBILE
 local dragging, dragInput, dragStart, startPos
-
-local function update(input)
-    local delta = input.Position - dragStart
-    Main.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-end
 
 Main.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
@@ -238,6 +274,7 @@ end)
 
 UserInputService.InputChanged:Connect(function(input)
     if input == dragInput and dragging then
-        update(input)
+        local delta = input.Position - dragStart
+        Main.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
     end
 end)
