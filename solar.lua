@@ -7,9 +7,10 @@ ScreenGui.Name = "SolarDevUI"
 ScreenGui.ResetOnSpawn = false 
 ScreenGui.Parent = PlayerGui
 
-local Main = Instance.new("Frame") 
-Main.Size = UDim2.new(0, 900, 0, 550) 
-Main.Position = UDim2.new(0.5, -450, 0.5, -275) 
+local Main = Instance.new("Frame")
+Main.AnchorPoint = Vector2.new(0.5, 0.5)
+Main.Size = UDim2.new(0, 700, 0, 420)
+Main.Position = UDim2.new(0.5, 0, 0.5, 0)
 Main.BackgroundColor3 = Color3.fromRGB(12,12,12) 
 Main.BorderSizePixel = 0 
 Main.Parent = ScreenGui
@@ -31,7 +32,7 @@ Title.TextSize = 28
 Title.Parent = Main
 
 local Sidebar = Instance.new("Frame") 
-Sidebar.Size = UDim2.new(0,220,1,-50) 
+Sidebar.Size = UDim2.new(0, 170, 1, -50)
 Sidebar.Position = UDim2.new(0,10,0,45) 
 Sidebar.BackgroundTransparency = 1 
 Sidebar.Parent = Main
