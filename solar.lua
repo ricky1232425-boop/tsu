@@ -71,8 +71,8 @@ s.Parent = b
 end
 
 local Content = Instance.new("Frame") 
-Content.Position = UDim2.new(0,245,0,55) 
-Content.Size = UDim2.new(1,-255,1,-65) 
+Content.Position = UDim2.new(0, 190, 0, 55)
+Content.Size = UDim2.new(1, -200, 1, -65)
 Content.BackgroundTransparency = 1 
 Content.Parent = Main
 
